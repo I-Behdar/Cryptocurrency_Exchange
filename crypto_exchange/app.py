@@ -8,9 +8,9 @@ def parser():
     parser.add_argument('amount', type=float,
                         help='a float number for the crypto currency')
     parser.add_argument('crypto_currency', type=str,
-                        help='sum the integers (default: find the max)')
+                        help="crypto currncy's name")
     parser.add_argument('currency', type=str,
-                        help='sum the integers (default: find the max)')
+                        help="currency's name")
     args = parser.parse_args()
     return args
 
