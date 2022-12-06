@@ -15,10 +15,10 @@ def parser():
     return args
 
 
-data = parser()
+args = parser()
 
 
-def fetch_symbol(crypto: str) -> str:
+def fetch_crypto_symbol(crypto: str) -> str:
     r = requests.get('https://api.coingecko.com/api/v3/coins/list')
     symbols = r.json()
 
@@ -42,7 +42,7 @@ def conversion(amount: float, crypto_currency: str, normal_currency: str) -> flo
     return round(amount * exchange_rate, 2)
 
 
-input = (data.amount, data.crypto_currency, data.currency)
+input = (args.amount, args.crypto_currency, args.currency)
 output = conversion(amount=input[0], crypto_currency=input[1], normal_currency=input[2])
 
-print(f"{fetch_symbol(data.crypto_currency)} {data.amount} = USD {output}")
+print(f"{fetch_crypto_symbol(args.crypto_currency)} {args.amount} = {args.currency} {output}")
