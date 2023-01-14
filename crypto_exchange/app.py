@@ -8,33 +8,33 @@ def parser():
     parser.add_argument('amount', type=float,
                         help='a float number for the crypto currency')
     parser.add_argument('crypto_currency', type=str,
-                        help='sum the integers (default: find the max)')
+                        help="crypto currency's name")
     parser.add_argument('currency', type=str,
-                        help='sum the integers (default: find the max)')
+                        help="currency's name")
     args = parser.parse_args()
     return args
 
 
-data = parser()
-
-
-def fetch_symbol(crypto: str) -> str:
+def fetch_crypto_symbol(crypto: str) -> str:
     r = requests.get('https://api.coingecko.com/api/v3/coins/list')
     symbols = r.json()
-
-    for i in range(len(symbols)):
-        if symbols[i]['id'] == crypto:
-            return symbols[i]['symbol']
-
+    try:
+        for i in range(len(symbols)):
+            if symbols[i]['id'] == crypto:
+                return symbols[i]['symbol']
+    except KeyError:
+        return (f"(No Symbol)")
 
 def fetch_rates(crypto: str, currency: str) -> float:
     r = requests.get(f"https://api.coingecko.com/api/v3/coins/markets?vs_currency={currency}")
 
     rate = r.json()
-
-    for i in range(len(rate)):
-        if rate[i]['id'] == crypto:
-            return rate[i]['current_price']
+    try:
+        for i in range(len(rate)):
+            if rate[i]['id'] == crypto:
+                return rate[i]['current_price']
+    except KeyError:
+        return 0
 
 
 def conversion(amount: float, crypto_currency: str, normal_currency: str) -> float:
@@ -42,7 +42,9 @@ def conversion(amount: float, crypto_currency: str, normal_currency: str) -> flo
     return round(amount * exchange_rate, 2)
 
 
-input = (data.amount, data.crypto_currency, data.currency)
-output = conversion(amount=input[0], crypto_currency=input[1], normal_currency=input[2])
-
-print(f"{fetch_symbol(data.crypto_currency)} {data.amount} = USD {output}")
+if __name__ == '__main__':
+    args = parser()
+    output = conversion(amount=args.amount, crypto_currency=args.crypto_currency, normal_currency=args.currency)
+    if output != 0:
+        print(f"{fetch_crypto_symbol(args.crypto_currency)} {args.amount} = {args.currency} {output}")
+    print("Data currently not available!")
